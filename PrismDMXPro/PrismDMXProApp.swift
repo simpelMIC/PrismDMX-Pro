@@ -11,7 +11,7 @@ import SwiftUI
 struct PrismDMXProApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ParentView()
         }
     }
 }
