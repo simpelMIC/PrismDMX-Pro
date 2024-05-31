@@ -22,7 +22,7 @@
 		6FC801502C0A1BF200964AB9 /* clientData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FC8014F2C0A1BF200964AB9 /* clientData.swift */; };
 		6FC801522C0A1C0D00964AB9 /* welcomeScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FC801512C0A1C0D00964AB9 /* welcomeScreen.swift */; };
 		6FC801542C0A1E5F00964AB9 /* ws.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FC801532C0A1E5F00964AB9 /* ws.swift */; };
-		6FC8015E2C0A360100964AB9 /* firstNetworkSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FC8015D2C0A360100964AB9 /* firstNetworkSettings.swift */; };
+		6FC8015E2C0A360100964AB9 /* networkingSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FC8015D2C0A360100964AB9 /* networkingSettings.swift */; };
 		6FC801612C0A368B00964AB9 /* packet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FC801602C0A368B00964AB9 /* packet.swift */; };
 /* End PBXBuildFile section */
 
@@ -58,7 +58,7 @@
 		6FC8014F2C0A1BF200964AB9 /* clientData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = clientData.swift; sourceTree = "<group>"; };
 		6FC801512C0A1C0D00964AB9 /* welcomeScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = welcomeScreen.swift; sourceTree = "<group>"; };
 		6FC801532C0A1E5F00964AB9 /* ws.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ws.swift; sourceTree = "<group>"; };
-		6FC8015D2C0A360100964AB9 /* firstNetworkSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = firstNetworkSettings.swift; sourceTree = "<group>"; };
+		6FC8015D2C0A360100964AB9 /* networkingSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = networkingSettings.swift; sourceTree = "<group>"; };
 		6FC801602C0A368B00964AB9 /* packet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = packet.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -172,7 +172,7 @@
 			children = (
 				6FC801122C0A10CA00964AB9 /* parentView.swift */,
 				6FC801512C0A1C0D00964AB9 /* welcomeScreen.swift */,
-				6FC8015D2C0A360100964AB9 /* firstNetworkSettings.swift */,
+				6FC8015D2C0A360100964AB9 /* networkingSettings.swift */,
 			);
 			path = view;
 			sourceTree = "<group>";
@@ -343,7 +343,7 @@
 				6FC801542C0A1E5F00964AB9 /* ws.swift in Sources */,
 				6FC801612C0A368B00964AB9 /* packet.swift in Sources */,
 				6FC801522C0A1C0D00964AB9 /* welcomeScreen.swift in Sources */,
-				6FC8015E2C0A360100964AB9 /* firstNetworkSettings.swift in Sources */,
+				6FC8015E2C0A360100964AB9 /* networkingSettings.swift in Sources */,
 				6FC801112C0A10CA00964AB9 /* PrismDMXProApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -502,7 +502,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = PrismDMXPro/PrismDMXPro.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_ASSET_PATHS = "\"PrismDMXPro/Preview Content\"";
 				DEVELOPMENT_TEAM = A85Q5NP5JW;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -543,7 +543,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = PrismDMXPro/PrismDMXPro.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_ASSET_PATHS = "\"PrismDMXPro/Preview Content\"";
 				DEVELOPMENT_TEAM = A85Q5NP5JW;
 				ENABLE_HARDENED_RUNTIME = YES;

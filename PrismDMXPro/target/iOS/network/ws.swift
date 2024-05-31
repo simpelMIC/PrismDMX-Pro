@@ -14,9 +14,11 @@ class WebSocket: WebSocketConnectionDelegate {
     var socket: NWWebSocket?
     
     @Binding var cnw: ClientNetworking
+    @Binding var packet: Packet
     
-    init(cnw: Binding<ClientNetworking>) {
+    init(cnw: Binding<ClientNetworking>, packet: Binding<Packet>) {
         self._cnw = cnw
+        self._packet = packet
     }
     
     // Connection
@@ -48,18 +50,14 @@ class WebSocket: WebSocketConnectionDelegate {
             cnw.error = "Invalid URL: \(urlString)"
             return
         }
-        
-        print("Connecting to \(url)")
-        await connectToSocket(url: url, response: true)
+        await connectToSocket(url)
     }
 
-    func connectToSocket(url: URL, response: Bool) async {
+    func connectToSocket(_ url: URL) async {
         self.socket = NWWebSocket(url: url)
         self.socket?.delegate = self
         await self.socket?.connectAsync()
-        if response {
-            print("WebSocket connected to: \(url)")
-        }
+        print("Connecting to \(url)")
     }
     
     func disconnect(response: Bool) async {
@@ -88,15 +86,14 @@ class WebSocket: WebSocketConnectionDelegate {
     // WebSocketConnectionDelegate methods
     
     func webSocketDidConnect(connection: WebSocketConnection) {
-        print("WebSocket connected")
+        print("WebSocket connected to \(connection)")
         cnw.connected = true
-        cnw.error = nil
     }
 
     func webSocketDidDisconnect(connection: WebSocketConnection, closeCode: NWProtocolWebSocket.CloseCode, reason: Data?) {
         print("WebSocket disconnected with code: \(closeCode)")
         cnw.connected = false
-        cnw.error = "Disconnected"
+        cnw.error = "Disconnected with code: \(closeCode)"
     }
 
     func webSocketViabilityDidChange(connection: WebSocketConnection, isViable: Bool) {
@@ -121,6 +118,7 @@ class WebSocket: WebSocketConnectionDelegate {
 
     func webSocketDidReceiveMessage(connection: WebSocketConnection, string: String) {
         print("WebSocket received message as string: \(string)")
+        packet = PacketJSONModule().decodePacket(from: string) ?? Packet(templates: FixtureTemplateList(templates: []), fixtures: FixtureList(fixtures: []), fixtureGroups: FixtureGroupList(fixtureGroups: []), mixer: Mixer(pages: [], color: "#ffffff", isMixerAvailable: "false", mixerType: "0"))
     }
 
     func webSocketDidReceiveMessage(connection: WebSocketConnection, data: Data) {
