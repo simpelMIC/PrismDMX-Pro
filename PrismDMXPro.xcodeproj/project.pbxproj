@@ -22,8 +22,6 @@
 		6FC801502C0A1BF200964AB9 /* clientData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FC8014F2C0A1BF200964AB9 /* clientData.swift */; };
 		6FC801522C0A1C0D00964AB9 /* welcomeScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FC801512C0A1C0D00964AB9 /* welcomeScreen.swift */; };
 		6FC801542C0A1E5F00964AB9 /* ws.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FC801532C0A1E5F00964AB9 /* ws.swift */; };
-		6FC801562C0A1ED700964AB9 /* LICENSE.txt in Resources */ = {isa = PBXBuildFile; fileRef = 6FC801552C0A1ED700964AB9 /* LICENSE.txt */; };
-		6FC801582C0A1EDC00964AB9 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 6FC801572C0A1EDC00964AB9 /* README.md */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -58,8 +56,6 @@
 		6FC8014F2C0A1BF200964AB9 /* clientData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = clientData.swift; sourceTree = "<group>"; };
 		6FC801512C0A1C0D00964AB9 /* welcomeScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = welcomeScreen.swift; sourceTree = "<group>"; };
 		6FC801532C0A1E5F00964AB9 /* ws.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ws.swift; sourceTree = "<group>"; };
-		6FC801552C0A1ED700964AB9 /* LICENSE.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = LICENSE.txt; path = ../../../Downloads/LICENSE.txt; sourceTree = "<group>"; };
-		6FC801572C0A1EDC00964AB9 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../../../Downloads/README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -95,8 +91,6 @@
 		6FC801042C0A10CA00964AB9 = {
 			isa = PBXGroup;
 			children = (
-				6FC801552C0A1ED700964AB9 /* LICENSE.txt */,
-				6FC801572C0A1EDC00964AB9 /* README.md */,
 				6FC8010F2C0A10CA00964AB9 /* PrismDMXPro */,
 				6FC801212C0A10CB00964AB9 /* PrismDMXProTests */,
 				6FC8012B2C0A10CB00964AB9 /* PrismDMXProUITests */,
@@ -312,9 +306,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6FC801562C0A1ED700964AB9 /* LICENSE.txt in Resources */,
 				6FC801192C0A10CB00964AB9 /* Preview Assets.xcassets in Resources */,
-				6FC801582C0A1EDC00964AB9 /* README.md in Resources */,
 				6FC801152C0A10CB00964AB9 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
