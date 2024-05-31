@@ -10,7 +10,7 @@ import SwiftUI
 import Network
 import NWWebSocket
 
-class Websocket: WebSocketConnectionDelegate {
+class WebSocket: WebSocketConnectionDelegate {
     var socket: NWWebSocket?
     
     @Binding var cnw: ClientNetworking
@@ -19,10 +19,10 @@ class Websocket: WebSocketConnectionDelegate {
         self._cnw = cnw
     }
     
-    //Connection
+    // Connection
     
-    func connect(cprotocol: ClientNWProtocol, ip: String, port: String, path: String) {
-        //Generate protocol
+    func connect(cprotocol: ClientNWProtocol, ip: String, port: String, path: String) async {
+        // Generate protocol
         let myProtocol: String
         switch cprotocol {
         case .https:
@@ -35,58 +35,57 @@ class Websocket: WebSocketConnectionDelegate {
             myProtocol = "wss://"
         }
         
+        let urlString: String
         if port.isEmpty {
-            // Check if the IP is a valid URL
-            guard let url = URL(string: "\(myProtocol)\(ip)\(path)") else {
-                // Print an error message or handle the invalid URL case as needed
-                cnw.error = "Invalid URL: \(myProtocol)\(ip)\(path)"
-                return
-            }
-            print("Connecting to \(url)")
-            connectToSocket(url: url, response: true)
+            urlString = "\(myProtocol)\(ip)\(path)"
         } else {
-            // Check if the IP is a valid URL
-            guard let url = URL(string: "\(myProtocol)\(ip):\(port)\(path)") else {
-                // Print an error message or handle the invalid URL case as needed
-                cnw.error = "Invalid URL: \(myProtocol)\(ip):\(port)\(path)"
-                return
-            }
-            print("Connecting to \(url)")
-            connectToSocket(url: url, response: true)
+            urlString = "\(myProtocol)\(ip):\(port)\(path)"
         }
+        
+        // Check if the URL is valid
+        guard let url = URL(string: urlString) else {
+            // Handle the invalid URL case
+            cnw.error = "Invalid URL: \(urlString)"
+            return
+        }
+        
+        print("Connecting to \(url)")
+        await connectToSocket(url: url, response: true)
     }
 
-    func connectToSocket(url: URL, response: Bool) {
+    func connectToSocket(url: URL, response: Bool) async {
         self.socket = NWWebSocket(url: url)
         self.socket?.delegate = self
-        self.socket?.connect()
+        await self.socket?.connectAsync()
         if response {
-            print("Websocket connected to: \(url)")
+            print("WebSocket connected to: \(url)")
         }
     }
     
-    func disconnect(response: Bool) {
-        socket?.disconnect()
-        if response == true {
-            print("Websocket disconnect")
+    func disconnect(response: Bool) async {
+        await socket?.disconnectAsync()
+        if response {
+            print("WebSocket disconnected")
         }
     }
     
-    //Data
+    // Data
     
-    func sendBindingString(_ string: Binding<String>, response: Bool) {
-        socket?.send(string: string.wrappedValue)
-        if response == true {
+    func sendBindingString(_ string: Binding<String>, response: Bool) async {
+        await socket?.sendAsync(string: string.wrappedValue)
+        if response {
+            print("Sent message: \(string.wrappedValue)")
+        }
+    }
+    
+    func sendString(_ string: String, response: Bool) async {
+        await socket?.sendAsync(string: string)
+        if response {
             print("Sent message: \(string)")
         }
     }
     
-    func sendString(_ string: String, response: Bool) {
-        socket?.send(string: string)
-        if response == true {
-            print("Sent message: \(string)")
-        }
-    }
+    // WebSocketConnectionDelegate methods
     
     func webSocketDidConnect(connection: WebSocketConnection) {
         print("WebSocket connected")
@@ -111,7 +110,9 @@ class Websocket: WebSocketConnectionDelegate {
     func webSocketDidReceiveError(connection: WebSocketConnection, error: NWError) {
         print("WebSocket received error: \(error)")
         cnw.error = error.localizedDescription
-        self.disconnect(response: true)
+        Task {
+            await self.disconnect(response: true)
+        }
     }
 
     func webSocketDidReceivePong(connection: WebSocketConnection) {
@@ -125,6 +126,31 @@ class Websocket: WebSocketConnectionDelegate {
     func webSocketDidReceiveMessage(connection: WebSocketConnection, data: Data) {
         print("WebSocket received message as data: \(data)")
         cnw.error = "Untrusted Source"
-        self.disconnect(response: true)
+        Task {
+            await self.disconnect(response: true)
+        }
+    }
+}
+
+extension NWWebSocket {
+    func connectAsync() async {
+        await withCheckedContinuation { continuation in
+            self.connect()
+            continuation.resume()
+        }
+    }
+    
+    func disconnectAsync() async {
+        await withCheckedContinuation { continuation in
+            self.disconnect()
+            continuation.resume()
+        }
+    }
+    
+    func sendAsync(string: String) async {
+        await withCheckedContinuation { continuation in
+            self.send(string: string)
+            continuation.resume()
+        }
     }
 }

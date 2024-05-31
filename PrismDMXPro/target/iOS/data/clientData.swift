@@ -36,15 +36,17 @@ struct ClientOnboarding: Codable {
     var step: Int
 }
 
-class ClientDataManager {
+class ClientDataJSONModule {
     func save(_ data: ClientData) {
         let defaults = UserDefaults.standard
         defaults.set(JSONClientData().encode(data), forKey: "PMXClientData")
+        print("Saved ClientData")
     }
     
     func load() -> ClientData? {
         let defaults = UserDefaults.standard
         let clientData = JSONClientData().decode(defaults.string(forKey: "PMXClientData") ?? "")
+        print("Loaded ClientData")
         return clientData
     }
 }

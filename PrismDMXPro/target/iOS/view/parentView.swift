@@ -27,12 +27,13 @@ struct ParentView: View {
                         Button("Begin your experience") {
                             //Begin Networking Settings
                             clientData.onboarding.ready = true
+                            ClientDataJSONModule().save(clientData)
                         }
                         .buttonStyle(.borderedProminent)
                     })
                     .task {
                         //Load previous saved Data :: If nothing is found it will load default data
-                        clientData = ClientDataManager().load() ?? ClientData(networking: ClientNetworking(ready: false, nwProtocol: .ws, ip: "192.168.178.187", port: "8000", path: "/ws/main", connected: false), onboarding: ClientOnboarding(ready: false, step: 0))
+                        clientData = ClientDataJSONModule().load() ?? ClientData(networking: ClientNetworking(ready: false, nwProtocol: .ws, ip: "192.168.178.187", port: "8000", path: "/ws/main", connected: false), onboarding: ClientOnboarding(ready: false, step: 0))
                     }
             }
         }
