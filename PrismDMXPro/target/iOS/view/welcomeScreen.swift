@@ -11,9 +11,8 @@ import SwiftUI
 struct WelcomingScreen: View {
     var body: some View {
         ZStack {
-            Image("myImage")
+            Image("bgImage1")
                 .renderingMode(.original)
-                .resizable()
                 .aspectRatio(contentMode: .fill)
             Text("Welcome to the bright-side!")
                 .font(.system(size: 60, weight: .semibold, design: .default))
