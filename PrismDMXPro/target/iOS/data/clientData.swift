@@ -37,9 +37,15 @@ enum ClientNWProtocol: String, Codable, CaseIterable {
     case wss
 }
 
+enum DisplayMode: String, Codable, CaseIterable {
+    case left
+    case right
+}
+
 struct ClientData: Codable, Equatable {
     var networking: ClientNetworking
     var onboarding: ClientOnboarding
+    var meta: ClientMeta
 }
 
 struct ClientNetworking: Codable, Equatable {
@@ -55,6 +61,10 @@ struct ClientNetworking: Codable, Equatable {
 struct ClientOnboarding: Codable, Equatable {
     var ready: Bool
     var step: Int
+}
+
+struct ClientMeta: Codable, Equatable {
+    var displayMode: DisplayMode
 }
 
 // Module responsible for handling saving and loading of client data

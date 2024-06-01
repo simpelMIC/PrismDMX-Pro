@@ -178,7 +178,7 @@ class WebSocket: WebSocketConnectionDelegate {
     // WebSocket received a message as a string.
     func webSocketDidReceiveMessage(connection: WebSocketConnection, string: String) {
         print("WebSocket received message as string: \(string)")
-        packet = PacketJSONModule(currentPacket: $packet).decodePacket(from: string) ?? Packet(fixtureTemplates: FixtureTemplateList(templates: []), fixtures: FixtureList(fixtures: []), fixtureGroups: FixtureGroupList(fixtureGroups: []), mixer: Mixer(pages: [], color: "#ffffff", isMixerAvailable: "false", mixerType: "0"), meta: Meta(currentProject: Project(internalID: "error", name: "error at webSocketReciever"), availableProjects: []))
+        packet = PacketJSONModule(currentPacket: $packet).decodePacket(from: string) ?? Packet(fixtureTemplates: FixtureTemplateList(templates: []), fixtures: FixtureList(fixtures: []), fixtureGroups: FixtureGroupList(fixtureGroups: []), mixer: Mixer(pages: [], color: "#ffffff", isMixerAvailable: "false", mixerType: "0"), meta: Meta(currentProject: Project(internalID: "error", name: "error at webSocketReciever"), availableProjects: [], setup: "false", channels: "false"))
     }
 
     // WebSocket received a message as data.

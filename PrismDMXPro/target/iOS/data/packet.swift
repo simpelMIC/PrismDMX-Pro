@@ -65,6 +65,8 @@ struct Mixer: Equatable, Codable {
 struct Meta: Equatable, Codable {
     var currentProject: Project?
     var availableProjects: [Project]
+    var setup: String //Bool
+    var channels: String //Bool
 }
 
 struct Project: Equatable, Codable {

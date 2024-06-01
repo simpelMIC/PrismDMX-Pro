@@ -20,17 +20,25 @@ struct ProjectSelectionView: View {
             List($packet.meta.availableProjects.wrappedValue.indices, id: \.self) { project in
                 Button($packet.meta.availableProjects[project].name.wrappedValue) {
                     Task {
-                        await websocket.sendString("{\"setProject\": \"\($packet.meta.availableProjects[project].internalID)\"}", response: true)
+                        await websocket.sendString("{\"setProject\": \"\($packet.meta.availableProjects[project].wrappedValue.internalID)\"}", response: true)
                     }
                 }
                 .accentColor(.white)
             }
-            .navigationTitle("Available Projects")
+            .navigationTitle("Choose a project")
             .toolbar {
-                Button {
-                    isSheetPresented.toggle()
-                } label: {
-                    Image(systemName: "plus")
+                HStack {
+                    Button("Disconnect") {
+                        Task {
+                            await websocket.disconnect(response: true)
+                        }
+                        clientData.networking.ready = false
+                    }
+                    Button {
+                        isSheetPresented.toggle()
+                    } label: {
+                        Image(systemName: "plus")
+                    }
                 }
             }
         }
@@ -39,6 +47,7 @@ struct ProjectSelectionView: View {
                 Task {
                     await websocket.sendString("{\"newProject\": \"\($sheetProjectName.wrappedValue)\"}", response: true)
                 }
+                isSheetPresented.toggle()
             }
         })
     }
@@ -49,11 +58,24 @@ struct NewProjectSheetView: View {
     var onSubmit: () -> Void
     
     var body: some View {
-        Text("New Project")
-        TextField("Name", text: $projectName)
-        Button("Submit") {
-            onSubmit()
+        VStack {
+            Text("New Project")
+                .font(.title)
+            HStack {
+                Text("Name:")
+                TextField("Name", text: $projectName)
+            }
+            Spacer()
+            Button("Create") {
+                onSubmit()
+            }
+            .buttonStyle(.borderedProminent)
         }
-        .buttonStyle(.borderedProminent)
+        .padding(20)
     }
+}
+
+#Preview {
+    ProjectSelectionView(clientData: .constant(ClientData(networking: ClientNetworking(ready: false, nwProtocol: .ws, ip: "192.168.178.187", port: "8000", path: "/ws/main", connected: false), onboarding: ClientOnboarding(ready: true, step: 1), meta: ClientMeta(displayMode: .left))), packet: .constant(Packet(fixtureTemplates: FixtureTemplateList(templates: [FixtureTemplate(internalID: "1", name: "Hello", channels: [Channel(internalID: "1", ChannelName: "Milan", ChannelType: "Milan", dmxChannel: "1"), Channel(internalID: "2", ChannelName: "Johannes", ChannelType: "Johannes", dmxChannel: "2")]), FixtureTemplate(internalID: "2", name: "Hugo", channels: [])]), fixtures: FixtureList(fixtures: [Fixture(internalID: "1", name: "Thorsten", startChannel: "1", selected: "false", channels: [Channel(internalID: "3982", ChannelName: "Henriette", ChannelType: "Master", dmxChannel: "39")]), Fixture(internalID: "2", name: "Hans", startChannel: "1", selected: "true", channels: [])]), fixtureGroups: FixtureGroupList(fixtureGroups: [FixtureGroup(name: "Peter", groupID: "1", internalIDs: ["1", "2"], selected: "false"), FixtureGroup(name: "Jürgen", groupID: "2", internalIDs: [], selected: "true")]), mixer: Mixer(pages: [MixerPage(num: "1", faders: [MixerFader(name: "Herbert", color: "#ffffff", isTouched: "false", value: "255", assignedType: "Fixture", assignedID: "1", id: "1")], buttons: [MixerButton(name: "Karsten", color: "#ffffff", isPressed: "true", assignedType: "FixtureGroup", assignedID: "1", id: "2")], id: "3")], color: "#ffffff", isMixerAvailable: "false", mixerType: "0"), meta: Meta(currentProject: Project(internalID: "1", name: "MLS Kleinkunst"), availableProjects: [Project(internalID: "1", name: "MLS Kleinkunst")], setup: "false", channels: "false"))), websocket: .constant(WebSocket(cnw: .constant(ClientNetworking(ready: false, nwProtocol: .ws, ip: "192.168.178.187", port: "8000", path: "/ws/main", connected: false)), packet: .constant(Packet(fixtureTemplates: FixtureTemplateList(templates: []), fixtures: FixtureList(fixtures: []), fixtureGroups: FixtureGroupList(fixtureGroups: []), mixer: Mixer(pages: [], color: "#ffffff", isMixerAvailable: "false", mixerType: "0"), meta: Meta(currentProject: Project(internalID: "1", name: "MLS Kleinkunst"), availableProjects: [Project(internalID: "1", name: "MLS Kleinkunst")], setup: "false", channels: "false"))))))
+    //NewProjectSheetView(projectName: .constant("New Project"), onSubmit: {})
 }
