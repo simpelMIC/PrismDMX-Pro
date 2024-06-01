@@ -36,10 +36,11 @@ import SwiftUI
 */
 
 struct Packet: Equatable, Codable {
-    var templates: FixtureTemplateList
+    var fixtureTemplates: FixtureTemplateList
     var fixtures: FixtureList
     var fixtureGroups: FixtureGroupList
     var mixer: Mixer
+    var meta: Meta
 }
 
 struct FixtureList: Equatable, Codable {
@@ -61,6 +62,16 @@ struct Mixer: Equatable, Codable {
     var mixerType: String //Divides between 5/10/15 .. mixers
 }
 
+struct Meta: Equatable, Codable {
+    var currentProject: Project?
+    var availableProjects: [Project]
+}
+
+struct Project: Equatable, Codable {
+    var internalID: String //Int
+    var name: String
+}
+
 //_______\\
 
 struct FixtureTemplate: Equatable, Codable {
@@ -80,13 +91,15 @@ struct FixtureGroup: Equatable, Codable {
     var name: String
     var groupID: String //Int
     var internalIDs: [String] //Array<Int>
+    var selected: String //Bool
 }
 
 struct Fixture: Equatable, Codable {
     var internalID: String //Int
     var name: String
     var startChannel: String //Int
-    var templateID: String //Int
+    var selected: String //Bool
+    var channels: [Channel]
 }
 
 struct MixerPage: Equatable, Codable {
@@ -152,6 +165,7 @@ class PacketJSONModule {
         var fixtures: FixtureList?
         var fixtureGroups: FixtureGroupList?
         var mixer: Mixer?
+        var meta: Meta?
         
         // Attempt to decode different types from JSON data
         if let decodedTemplates = try? decoder.decode(FixtureTemplateList.self, from: data) {
@@ -166,14 +180,18 @@ class PacketJSONModule {
         if let decodedMixer = try? decoder.decode(Mixer.self, from: data) {
             mixer = decodedMixer // Update mixer if decoding succeeds
         }
+        if let decodedMeta = try? decoder.decode(Meta.self, from: data) {
+            meta = decodedMeta // Update meta if decoding succeeds
+        }
         
         // Create a new Packet object with decoded values,
         // or fall back to currentPacket values if decoding fails or decoded value is nil
         return Packet(
-            templates: templates ?? currentPacket.templates,
+            fixtureTemplates: templates ?? currentPacket.fixtureTemplates,
             fixtures: fixtures ?? currentPacket.fixtures,
             fixtureGroups: fixtureGroups ?? currentPacket.fixtureGroups,
-            mixer: mixer ?? currentPacket.mixer
+            mixer: mixer ?? currentPacket.mixer,
+            meta: meta ?? currentPacket.meta
         )
     }
 }
