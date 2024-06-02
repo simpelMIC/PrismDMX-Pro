@@ -15,8 +15,8 @@ struct ProjectSelectionView: View {
     
     @State var isSheetPresented: Bool = false
     @State var sheetProjectName: String = "New Project"
+    @State var disconnectButton: Bool?
     var body: some View {
-        NavigationStack {
             List($packet.meta.availableProjects.wrappedValue.indices, id: \.self) { project in
                 Button($packet.meta.availableProjects[project].name.wrappedValue) {
                     Task {
@@ -28,11 +28,13 @@ struct ProjectSelectionView: View {
             .navigationTitle("Choose a project")
             .toolbar {
                 HStack {
-                    Button("Disconnect") {
-                        Task {
-                            await websocket.disconnect(response: true)
+                    if $disconnectButton.wrappedValue ?? true {
+                        Button("Disconnect") {
+                            Task {
+                                await websocket.disconnect(response: true)
+                            }
+                            clientData.networking.ready = false
                         }
-                        clientData.networking.ready = false
                     }
                     Button {
                         isSheetPresented.toggle()
@@ -41,7 +43,6 @@ struct ProjectSelectionView: View {
                     }
                 }
             }
-        }
         .sheet(isPresented: $isSheetPresented, content: {
             NewProjectSheetView(projectName: $sheetProjectName) {
                 Task {

@@ -10,53 +10,6 @@ import SwiftUI
 import Network
 import NWWebSocket
 
-///#PMX Websocket Module
-/*
- ### Classes and Structs:
- 1. `WebSocket`:
-     - Inherits from `WebSocketConnectionDelegate`.
-     - Has properties:
-         - `socket`: An optional instance of `NWWebSocket`.
-         - `cnw`: A binding to `ClientNetworking`.
-         - `packet`: A binding to `Packet`.
-
- ### Functions:
- 1. `init(cnw:packet:)`:
-     - Initializes a new instance of `WebSocket`.
-     - Takes two bindings, `cnw` and `packet`, and assigns them to respective properties.
-
- 2. `connect(cprotocol:ip:port:path:)`:
-     - Establishes a connection with the WebSocket server.
-     - Takes parameters for the client network protocol, IP, port, and path.
-     - Constructs a URL based on the provided parameters.
-     - Attempts to connect to the WebSocket using the constructed URL.
-
- 3. `connectToSocket(_:)`:
-     - Connects to the WebSocket server using the provided URL.
-
- 4. `disconnect(response:)`:
-     - Disconnects from the WebSocket server.
-     - Optionally prints a message if `response` is true.
-
- 5. `sendBindingString(_:response:)`:
-     - Sends a string asynchronously to the WebSocket server.
-     - Accepts a binding string and an optional response flag.
-
- 6. `sendString(_:response:)`:
-     - Sends a string asynchronously to the WebSocket server.
-     - Accepts a string and an optional response flag.
-
- 7. WebSocketConnectionDelegate methods:
-     - These methods are required by the `WebSocketConnectionDelegate` protocol and handle various events related to WebSocket connection.
-
- ### Extension:
- 1. Extension to `NWWebSocket`:
-     - Adds asynchronous versions of connection, disconnection, and sending messages.
-     - `connectAsync()`: Asynchronously connects to the WebSocket server.
-     - `disconnectAsync()`: Asynchronously disconnects from the WebSocket server.
-     - `sendAsync(string:)`: Asynchronously sends a string message to the WebSocket server.
- */
-
 class WebSocket: WebSocketConnectionDelegate {
     var socket: NWWebSocket?
     
@@ -178,7 +131,7 @@ class WebSocket: WebSocketConnectionDelegate {
     // WebSocket received a message as a string.
     func webSocketDidReceiveMessage(connection: WebSocketConnection, string: String) {
         print("WebSocket received message as string: \(string)")
-        packet = PacketJSONModule(currentPacket: $packet).decodePacket(from: string) ?? Packet(fixtureTemplates: FixtureTemplateList(templates: []), fixtures: FixtureList(fixtures: []), fixtureGroups: FixtureGroupList(fixtureGroups: []), mixer: Mixer(pages: [], color: "#ffffff", isMixerAvailable: "false", mixerType: "0"), meta: Meta(currentProject: Project(internalID: "error", name: "error at webSocketReciever"), availableProjects: [], setup: "false", channels: "false"))
+        packet = PacketJSONModule(currentPacket: $packet).decodePacket(string)
     }
 
     // WebSocket received a message as data.

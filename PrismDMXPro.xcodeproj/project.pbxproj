@@ -10,6 +10,8 @@
 		6F0086612C0BB08E00910D8C /* projectSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F0086602C0BB08E00910D8C /* projectSelectionView.swift */; };
 		6F0086642C0BC00E00910D8C /* left.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F0086632C0BC00E00910D8C /* left.swift */; };
 		6F0086662C0BC0B200910D8C /* right.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F0086652C0BC0B200910D8C /* right.swift */; };
+		6F00866A2C0C806800910D8C /* setupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F0086692C0C806800910D8C /* setupView.swift */; };
+		6F00866D2C0C80CD00910D8C /* mixerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F00866C2C0C80CD00910D8C /* mixerView.swift */; };
 		6FC801112C0A10CA00964AB9 /* PrismDMXProApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FC801102C0A10CA00964AB9 /* PrismDMXProApp.swift */; };
 		6FC801132C0A10CA00964AB9 /* parentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FC801122C0A10CA00964AB9 /* parentView.swift */; };
 		6FC801152C0A10CB00964AB9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6FC801142C0A10CB00964AB9 /* Assets.xcassets */; };
@@ -50,6 +52,8 @@
 		6F0086602C0BB08E00910D8C /* projectSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = projectSelectionView.swift; sourceTree = "<group>"; };
 		6F0086632C0BC00E00910D8C /* left.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = left.swift; sourceTree = "<group>"; };
 		6F0086652C0BC0B200910D8C /* right.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = right.swift; sourceTree = "<group>"; };
+		6F0086692C0C806800910D8C /* setupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = setupView.swift; sourceTree = "<group>"; };
+		6F00866C2C0C80CD00910D8C /* mixerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mixerView.swift; sourceTree = "<group>"; };
 		6FC8010D2C0A10CA00964AB9 /* PrismDMXPro.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PrismDMXPro.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6FC801102C0A10CA00964AB9 /* PrismDMXProApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrismDMXProApp.swift; sourceTree = "<group>"; };
 		6FC801122C0A10CA00964AB9 /* parentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = parentView.swift; sourceTree = "<group>"; };
@@ -105,6 +109,32 @@
 				6F0086652C0BC0B200910D8C /* right.swift */,
 			);
 			path = orientation;
+			sourceTree = "<group>";
+		};
+		6F0086672C0C802900910D8C /* onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				6FC8015D2C0A360100964AB9 /* networkingSettings.swift */,
+				6FC801512C0A1C0D00964AB9 /* welcomeScreen.swift */,
+				6F0086602C0BB08E00910D8C /* projectSelectionView.swift */,
+			);
+			path = onboarding;
+			sourceTree = "<group>";
+		};
+		6F0086682C0C804300910D8C /* setup */ = {
+			isa = PBXGroup;
+			children = (
+				6F0086692C0C806800910D8C /* setupView.swift */,
+			);
+			path = setup;
+			sourceTree = "<group>";
+		};
+		6F00866B2C0C80C000910D8C /* mixer */ = {
+			isa = PBXGroup;
+			children = (
+				6F00866C2C0C80CD00910D8C /* mixerView.swift */,
+			);
+			path = mixer;
 			sourceTree = "<group>";
 		};
 		6FC801042C0A10CA00964AB9 = {
@@ -185,11 +215,11 @@
 		6FC8014C2C0A1BD400964AB9 /* view */ = {
 			isa = PBXGroup;
 			children = (
-				6F0086622C0BC00400910D8C /* orientation */,
 				6FC801122C0A10CA00964AB9 /* parentView.swift */,
-				6FC801512C0A1C0D00964AB9 /* welcomeScreen.swift */,
-				6FC8015D2C0A360100964AB9 /* networkingSettings.swift */,
-				6F0086602C0BB08E00910D8C /* projectSelectionView.swift */,
+				6F0086672C0C802900910D8C /* onboarding */,
+				6F0086682C0C804300910D8C /* setup */,
+				6F00866B2C0C80C000910D8C /* mixer */,
+				6F0086622C0BC00400910D8C /* orientation */,
 			);
 			path = view;
 			sourceTree = "<group>";
@@ -357,11 +387,13 @@
 			files = (
 				6F0086662C0BC0B200910D8C /* right.swift in Sources */,
 				6FC801502C0A1BF200964AB9 /* clientData.swift in Sources */,
+				6F00866D2C0C80CD00910D8C /* mixerView.swift in Sources */,
 				6FC801132C0A10CA00964AB9 /* parentView.swift in Sources */,
 				6F0086642C0BC00E00910D8C /* left.swift in Sources */,
 				6FC801542C0A1E5F00964AB9 /* ws.swift in Sources */,
 				6FC801612C0A368B00964AB9 /* packet.swift in Sources */,
 				6FC801522C0A1C0D00964AB9 /* welcomeScreen.swift in Sources */,
+				6F00866A2C0C806800910D8C /* setupView.swift in Sources */,
 				6F0086612C0BB08E00910D8C /* projectSelectionView.swift in Sources */,
 				6FC8015E2C0A360100964AB9 /* networkingSettings.swift in Sources */,
 				6FC801112C0A10CA00964AB9 /* PrismDMXProApp.swift in Sources */,

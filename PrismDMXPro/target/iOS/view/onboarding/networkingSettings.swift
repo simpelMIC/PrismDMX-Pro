@@ -79,19 +79,18 @@ struct NWSettingsView: View {
                         }
                         .buttonStyle(.borderedProminent)
                         //JSON Data Export
-                        /*
                         LazyHStack {
                             Button("Copy Fixtures") {
                                 let pasteboard = UIPasteboard.general
-                                pasteboard.string = PacketJSONModule(currentPacket: $packet).encode($packet.fixtures.fixtures.wrappedValue) ?? "error"
+                                pasteboard.string = PacketJSONModule(currentPacket: $packet).encode($packet.fixtures.wrappedValue) ?? "error"
                             }
                             Button("Copy FixtureGroups") {
                                 let pasteboard = UIPasteboard.general
-                                pasteboard.string = PacketJSONModule(currentPacket: $packet).encode($packet.fixtureGroups.fixtureGroups.wrappedValue) ?? "error"
+                                pasteboard.string = PacketJSONModule(currentPacket: $packet).encode($packet.fixtureGroups.wrappedValue) ?? "error"
                             }
                             Button("Copy Templates") {
                                 let pasteboard = UIPasteboard.general
-                                pasteboard.string = PacketJSONModule(currentPacket: $packet).encode($packet.fixtureTemplates.templates.wrappedValue) ?? "error"
+                                pasteboard.string = PacketJSONModule(currentPacket: $packet).encode($packet.fixtureTemplates.wrappedValue) ?? "error"
                             }
                             Button("Copy Mixer") {
                                 let pasteboard = UIPasteboard.general
@@ -101,7 +100,7 @@ struct NWSettingsView: View {
                                 let pasteboard = UIPasteboard.general
                                 pasteboard.string = PacketJSONModule(currentPacket: $packet).encode($packet.meta.wrappedValue) ?? "error"
                             }
-                        }*/
+                        }
                     }
                 }
             }

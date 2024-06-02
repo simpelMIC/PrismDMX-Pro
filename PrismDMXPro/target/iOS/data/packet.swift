@@ -8,33 +8,6 @@
 import Foundation
 import SwiftUI
 
-///#PMX Packet
-/*
-1. **Structs**:
-    - `Packet`: Contains properties of type `FixtureTemplateList`, `FixtureList`, `FixtureGroupList`, and `Mixer`.
-    - `FixtureList`: Contains an array of `Fixture` objects.
-    - `FixtureTemplateList`: Contains an array of `FixtureTemplate` objects.
-    - `FixtureGroupList`: Contains an array of `FixtureGroup` objects.
-    - `Mixer`: Contains properties including an array of `MixerPage` objects.
-
-2. **Structs within Structs**:
-    - `FixtureTemplate`: Contains properties including an array of `Channel` objects.
-    - `FixtureGroup`: Contains an array of internal IDs representing fixtures grouped together.
-    - `Fixture`: Represents a single lighting fixture.
-
-3. **Additional Structs**:
-    - `Channel`: Represents a channel of a lighting fixture.
-
-4. **Classes**:
-    - `PacketJSONModule`: This class provides methods for encoding and decoding JSON data. It has an `@Binding` property `currentPacket` of type `Packet`, and two methods: `encode` to encode any `Encodable` object to JSON format, and `decodePacket` to decode a JSON string into a `Packet` object.
-
-5. **Properties**:
-    - Various properties within the structs, such as `internalID`, `name`, `channels`, etc., representing different attributes of the lighting fixtures, templates, and mixer components.
-
-6. **Functions**:
-    - Within `PacketJSONModule`, there are two methods: `encode` and `decodePacket`, which respectively encode a value to JSON and decode a JSON string into a `Packet` object.
-*/
-
 struct Packet: Equatable, Codable {
     var fixtureTemplates: FixtureTemplateList
     var fixtures: FixtureList
@@ -158,7 +131,7 @@ class PacketJSONModule {
     }
     
     // Method to decode a JSON string into a Packet object
-    func decodePacket(from jsonString: String) -> Packet? {
+    func decodePacket(_ jsonString: String) -> Packet {
         let data = jsonString.data(using: .utf8)! // Convert JSON string to data
         let decoder = JSONDecoder() // JSON decoder
         
@@ -170,20 +143,39 @@ class PacketJSONModule {
         var meta: Meta?
         
         // Attempt to decode different types from JSON data
-        if let decodedTemplates = try? decoder.decode(FixtureTemplateList.self, from: data) {
+        do {
+            let decodedTemplates = try decoder.decode(FixtureTemplateList.self, from: data)
             templates = decodedTemplates // Update templates if decoding succeeds
+        } catch {
+            print("Failed to decode FixtureTemplateList: \(error)")
         }
-        if let decodedFixtures = try? decoder.decode(FixtureList.self, from: data) {
+
+        do {
+            let decodedFixtures = try decoder.decode(FixtureList.self, from: data)
             fixtures = decodedFixtures // Update fixtures if decoding succeeds
+        } catch {
+            print("Failed to decode FixtureList: \(error)")
         }
-        if let decodedFixtureGroups = try? decoder.decode(FixtureGroupList.self, from: data) {
+
+        do {
+            let decodedFixtureGroups = try decoder.decode(FixtureGroupList.self, from: data)
             fixtureGroups = decodedFixtureGroups // Update fixtureGroups if decoding succeeds
+        } catch {
+            print("Failed to decode FixtureGroupList: \(error)")
         }
-        if let decodedMixer = try? decoder.decode(Mixer.self, from: data) {
+
+        do {
+            let decodedMixer = try decoder.decode(Mixer.self, from: data)
             mixer = decodedMixer // Update mixer if decoding succeeds
+        } catch {
+            print("Failed to decode Mixer: \(error)")
         }
-        if let decodedMeta = try? decoder.decode(Meta.self, from: data) {
+
+        do {
+            let decodedMeta = try decoder.decode(Meta.self, from: data)
             meta = decodedMeta // Update meta if decoding succeeds
+        } catch {
+            print("Failed to decode Meta: \(error)")
         }
         
         // Create a new Packet object with decoded values,

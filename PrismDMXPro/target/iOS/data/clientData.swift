@@ -8,28 +8,6 @@
 import Foundation
 import SwiftUI
 
-///#PMX Client Data Handler
-/*
- 1. **Structs:**
-    - `ClientNWProtocol`: An enumeration representing different network protocols (`https`, `http`, `ws`, `wss`).
-    - `ClientData`: A struct representing client data, consisting of networking and onboarding information.
-    - `ClientNetworking`: A struct representing networking information, including readiness, network protocol, IP address, port, path, connection status, and optional error message.
-    - `ClientOnboarding`: A struct representing onboarding status, including readiness and current step.
-
- 2. **Classes:**
-    - `ClientDataModule`: A class responsible for handling the saving and loading of client data.
-    - `ClientDataJSONModule`: A class responsible for encoding and decoding client data to/from JSON.
-
- 3. **Functions:**
-    - `ClientDataModule`:
-      - `save(_: ClientData)`: Saves client data to UserDefaults after encoding it to JSON.
-      - `load() -> ClientData?`: Loads client data from UserDefaults by decoding it from JSON.
-
-    - `ClientDataJSONModule`:
-      - `encode(_: ClientData) -> String?`: Encodes client data to a JSON string.
-      - `decode(_: String) -> ClientData?`: Decodes a JSON string to client data.
- */
-
 enum ClientNWProtocol: String, Codable, CaseIterable {
     case https
     case http
