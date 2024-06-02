@@ -124,31 +124,51 @@ struct FixtureGroupConfigurationView: View {
     }
 }
 
-//Frage an Ju:
+///Zwischenablage
 struct FixtureConfigurationView: View {
     @Binding var clientData: ClientData
     @Binding var packet: Packet
     @Binding var websocket: WebSocket
+    
+    @State var selectedFixtures: [Fixture] = []
+    @State var selectable: Bool = false
     var body: some View {
         ScrollView {
             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())]) {
-                ForEach($packet.fixtures.fixtures.wrappedValue.indices, id: \.self) { index in // Replace with your data model here
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 18, style: .continuous)
-                            .fill(Color(.systemFill))
-                            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .center)
-                            .aspectRatio(1/1, contentMode: .fit)
-                            .clipped()
-                            .clipped()
-                        VStack {
-                            Image(systemName: "lightbulb.fill")
-                                .imageScale(.large)
-                                .symbolRenderingMode(.monochrome)
-                                .font(.system(size: 20, weight: .regular, design: .default))
-                            Text($packet.fixtures.fixtures.wrappedValue[index].name)
-                                .font(.body)
-                                .frame(width: 110, height: 50)
-                                .clipped()
+                ForEach($packet.fixtures.fixtures.wrappedValue.indices, id: \.self) { index in
+                    if $selectable.wrappedValue {
+                        Button {
+                            if $selectedFixtures.wrappedValue.contains($packet.fixtures.fixtures.wrappedValue[index]) {
+                                selectedFixtures.remove(at: selectedFixtures.firstIndex(of: $packet.fixtures.fixtures.wrappedValue[index])!)
+                            } else {
+                                selectedFixtures.append($packet.fixtures.fixtures.wrappedValue[index])
+                            }
+                        } label: {
+                            SingleFixtureGridView(fixture: $packet.fixtures.fixtures[index], selectedFixtures: $selectedFixtures, contextMenu: false) {
+                                //Copy
+                            } onPaste: {
+                                //Paste
+                            } onDuplicate: {
+                                //Duplicate
+                            } onDelete: {
+                                //Delete
+                            }
+                        }
+                    } else {
+                        NavigationLink {
+                            
+                        } label: {
+                            SingleFixtureGridView(fixture: $packet.fixtures.fixtures[index], selectedFixtures: $selectedFixtures) {
+                                //Copy
+                            } onPaste: {
+                                //Paste
+                            } onDuplicate: {
+                                //Duplicate
+                            } onDelete: {
+                                //Delete
+                            }
+                            .buttonStyle(.plain)
+                            .accentColor(.primary)
                         }
                     }
                 }
@@ -158,9 +178,94 @@ struct FixtureConfigurationView: View {
         .navigationTitle("Fixture Configuration")
         .toolbar {
             Button {
+                selectable.toggle()
+                selectedFixtures = []
+            } label: {
+                if $selectable.wrappedValue {
+                    Text("Cancel")
+                } else {
+                    Text("Select")
+                }
+            }
+            Button {
                 
             } label: {
                 Image(systemName: "plus")
+            }
+        }
+    }
+}
+
+struct SingleFixtureGridView: View {
+    @Binding var fixture: Fixture
+    @Binding var selectedFixtures: [Fixture]
+    
+    @State var contextMenu: Bool?
+    
+    var onCopy: () -> Void
+    var onPaste: () -> Void
+    var onDuplicate: () -> Void
+    var onDelete: () -> Void
+    var body: some View {
+        if contextMenu ?? true {
+            ZStack {
+                if $selectedFixtures.wrappedValue.contains($fixture.wrappedValue) {
+                    RoundedRectangle(cornerRadius: 18, style: .continuous)
+                        .fill(.purple)
+                        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .center)
+                        .aspectRatio(1/1, contentMode: .fit)
+                        .clipped()
+                        .clipped()
+                }
+                RoundedRectangle(cornerRadius: 18, style: .continuous)
+                    .fill(Color(.systemFill))
+                    .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .center)
+                    .aspectRatio(1/1, contentMode: .fit)
+                    .clipped()
+                    .clipped()
+                VStack {
+                    Text($fixture.wrappedValue.name)
+                        .font(.body)
+                        .frame(width: 110, height: 50)
+                        .clipped()
+                }
+            }
+            .contextMenu {
+                Button("Copy") {
+                    onCopy()
+                }
+                Button("Paste") {
+                    onPaste()
+                }
+                Button("Duplicate") {
+                    onDuplicate()
+                }
+                Button("Delete", role: .destructive) {
+                    onDelete()
+                }
+            }
+        } else {
+            ZStack {
+                if $selectedFixtures.wrappedValue.contains($fixture.wrappedValue) {
+                    RoundedRectangle(cornerRadius: 18, style: .continuous)
+                        .fill(.purple)
+                        .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .center)
+                        .aspectRatio(1/1, contentMode: .fit)
+                        .clipped()
+                        .clipped()
+                }
+                RoundedRectangle(cornerRadius: 18, style: .continuous)
+                    .fill(Color(.systemFill))
+                    .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .center)
+                    .aspectRatio(1/1, contentMode: .fit)
+                    .clipped()
+                    .clipped()
+                VStack {
+                    Text($fixture.wrappedValue.name)
+                        .font(.body)
+                        .frame(width: 110, height: 50)
+                        .clipped()
+                }
             }
         }
     }
@@ -175,8 +280,9 @@ struct iPadSettingsView: View {
     var body: some View {
         List {
             Picker("iPad Display Mode", selection: $selectedDisplayMode) {
-                ForEach(DisplayMode.allCases, id: \.self) { i in
-                    Text(i.rawValue).tag(i)
+                ForEach(DisplayMode.allCases, id: \.self) { index in
+                    Text(index.rawValue.capitalizingFirstLetter())
+                        .tag(index)
                 }
             }
         }
