@@ -40,6 +40,7 @@ struct Meta: Equatable, Codable {
     var availableProjects: [Project]
     var setup: String //Bool
     var channels: String //Bool
+    var clipboard: String //Json
 }
 
 struct Project: Equatable, Codable {
