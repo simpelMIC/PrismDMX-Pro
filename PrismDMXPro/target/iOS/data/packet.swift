@@ -195,4 +195,20 @@ extension String {
     func capitalizingFirstLetter() -> String {
         return prefix(1).uppercased() + dropFirst()
     }
+    
+    func toggle() -> String {
+        if self == "true" {
+            return "false"
+        } else {
+            return "true"
+        }
+    }
+    
+    func bool() -> Bool {
+        if self == "true" {
+            return true
+        } else {
+            return false
+        }
+    }
 }

@@ -40,11 +40,20 @@ struct UntergeordneteSetupView: View {
     @Binding var clientData: ClientData
     @Binding var packet: Packet
     @Binding var websocket: WebSocket
+    
+    var isMixerAvailable: Bool {
+        if $packet.mixer.isMixerAvailable.wrappedValue == "true" {
+            return true
+        } else {
+            return false
+        }
+    }
     var body: some View {
         List {
             NavigationLink("Mixer") {
-                
+                MixerConfigView(clientData: $clientData, packet: $packet, websocket: $websocket)
             }
+            .disabled(!isMixerAvailable)
             NavigationLink("Fixture Schedule") {
                 FixturesSetupView(clientData: $clientData, packet: $packet, websocket: $websocket)
             }
@@ -62,6 +71,82 @@ struct UntergeordneteSetupView: View {
             }
         }
         .navigationTitle("Settings")
+    }
+}
+
+struct MixerConfigView: View {
+    @Binding var clientData: ClientData
+    @Binding var packet: Packet
+    @Binding var websocket: WebSocket
+    @State var mixerColorColor: Color = .white
+    var body: some View {
+        List {
+            Section("Faders") {
+                Button("Calibrate") {
+                    
+                }
+            }
+            Section("LEDs") {
+                ColorPicker("Mixer LED Color", selection: $mixerColorColor)
+            }
+        }
+        .navigationTitle("Mixer")
+        .onAppear {
+            mixerColorColor = hexStringToRGB(hex: $packet.mixer.color.wrappedValue)
+        }
+        .onDisappear {
+            packet.mixer.color = rgbToHexString(color: mixerColorColor)
+            setMixerColor()
+        }
+    }
+    
+    func rgbToHexString(color: Color) -> String {
+            guard let components = color.cgColor?.components else {
+                return "#ffffff"
+            }
+            
+            let red = components[0]
+            let green = components[1]
+            let blue = components[2]
+            
+            let redHex = String(format: "%02X", Int(red * 255))
+            let greenHex = String(format: "%02X", Int(green * 255))
+            let blueHex = String(format: "%02X", Int(blue * 255))
+            
+            return "#" + redHex + greenHex + blueHex
+        }
+
+    func hexStringToRGB(hex: String) -> Color {
+        // Remove the '#' if it exists
+        let cleanedHex = hex.hasPrefix("#") ? String(hex.dropFirst()) : hex
+        
+        // Ensure the string is 6 characters long
+        guard cleanedHex.count == 6 else {
+            return Color.white // default to white color if invalid
+        }
+        
+        // Extract RGB values
+        let redHex = String(cleanedHex.prefix(2))
+        let greenHex = String(cleanedHex.dropFirst(2).prefix(2))
+        let blueHex = String(cleanedHex.dropFirst(4).prefix(2))
+        
+        // Convert hex strings to Int values
+        let redInt = Int(redHex, radix: 16) ?? 255
+        let greenInt = Int(greenHex, radix: 16) ?? 255
+        let blueInt = Int(blueHex, radix: 16) ?? 255
+        
+        // Create Color from RGB values
+        return Color(
+            red: Double(redInt) / 255.0,
+            green: Double(greenInt) / 255.0,
+            blue: Double(blueInt) / 255.0
+        )
+    }
+    
+    func setMixerColor() {
+        Task {
+            await websocket.sendString("{\"setMixerColor\": \"\(rgbToHexString(color: $mixerColorColor.wrappedValue))\"}", response: true)
+        }
     }
 }
 
@@ -260,6 +345,9 @@ struct FixtureConfigurationView: View {
                         }
                     }
                     .contextMenu {
+                        Button("Duplicate") {
+                            newFixture($packet.fixtures.fixtures.wrappedValue[index])
+                        }
                         Button("Delete", role: .destructive) {
                             deleteFixture(id: $packet.fixtures.fixtures.wrappedValue[index].internalID)
                         }
@@ -293,6 +381,13 @@ struct FixtureConfigurationView: View {
     func deleteFixture(id: String) {
         Task {
             await websocket.sendString("{\"deleteFixture\": \"\(id)\"}", response: true)
+        }
+    }
+    
+    func newFixture(_ fixture: Fixture) {
+        Task {
+            let jsonString = PacketJSONModule(currentPacket: $packet).encode(fixture) ?? ""
+            await websocket.sendString("{\"newFixture\":\(jsonString)}", response: true)
         }
     }
 }
@@ -427,5 +522,5 @@ struct iPadSettingsView: View {
     
 
 #Preview {
-    SetupView(clientData: .constant(ClientData(networking: ClientNetworking(ready: false, nwProtocol: .ws, ip: "192.168.178.187", port: "8000", path: "/ws/main", connected: false), onboarding: ClientOnboarding(ready: true, step: 1), meta: ClientMeta(displayMode: .left))), packet: .constant(Packet(fixtureTemplates: FixtureTemplateList(templates: [FixtureTemplate(internalID: "1", name: "Hello", channels: [Channel(internalID: "1", ChannelName: "Milan", ChannelType: "Milan", dmxChannel: "1"), Channel(internalID: "2", ChannelName: "Johannes", ChannelType: "Johannes", dmxChannel: "2")]), FixtureTemplate(internalID: "2", name: "Hugo", channels: [])]), fixtures: FixtureList(fixtures: [Fixture(internalID: "1", name: "Thorsten", startChannel: "1", selected: "false", channels: [Channel(internalID: "3982", ChannelName: "Henriette", ChannelType: "Master", dmxChannel: "39")]), Fixture(internalID: "2", name: "Hans", startChannel: "1", selected: "true", channels: [])]), fixtureGroups: FixtureGroupList(fixtureGroups: [FixtureGroup(name: "Peter", groupID: "1", internalIDs: ["1", "2"], selected: "false"),FixtureGroup(name: "Peter", groupID: "1", internalIDs: ["1", "2"], selected: "false"),FixtureGroup(name: "Peter", groupID: "1", internalIDs: ["1", "2"], selected: "false"),FixtureGroup(name: "Peter", groupID: "1", internalIDs: ["1", "2"], selected: "false"),FixtureGroup(name: "Peter", groupID: "1", internalIDs: ["1", "2"], selected: "false"),FixtureGroup(name: "Peter", groupID: "1", internalIDs: ["1", "2"], selected: "false"),FixtureGroup(name: "Peter", groupID: "1", internalIDs: ["1", "2"], selected: "false"),FixtureGroup(name: "Peter", groupID: "1", internalIDs: ["1", "2"], selected: "false"),FixtureGroup(name: "Peter", groupID: "1", internalIDs: ["1", "2"], selected: "false"),FixtureGroup(name: "Peter", groupID: "1", internalIDs: ["1", "2"], selected: "false"),FixtureGroup(name: "Peter", groupID: "1", internalIDs: ["1", "2"], selected: "false"),FixtureGroup(name: "Peter", groupID: "1", internalIDs: ["1", "2"], selected: "false"),FixtureGroup(name: "Peter", groupID: "1", internalIDs: ["1", "2"], selected: "false"),FixtureGroup(name: "Peter", groupID: "1", internalIDs: ["1", "2"], selected: "false"),FixtureGroup(name: "Peter", groupID: "1", internalIDs: ["1", "2"], selected: "false"),FixtureGroup(name: "Peter", groupID: "1", internalIDs: ["1", "2"], selected: "false"),FixtureGroup(name: "Peter", groupID: "1", internalIDs: ["1", "2"], selected: "false"),FixtureGroup(name: "Peter", groupID: "1", internalIDs: ["1", "2"], selected: "false"),FixtureGroup(name: "Peter", groupID: "1", internalIDs: ["1", "2"], selected: "false"),FixtureGroup(name: "Peter", groupID: "1", internalIDs: ["1", "2"], selected: "false"),FixtureGroup(name: "PeterAAAHHAHHAHHAHHAHHAHHAHHAHHAHAHAHHAHHAHAHHAHHAHHAHHA", groupID: "1", internalIDs: ["1", "2"], selected: "false"),FixtureGroup(name: "Peter", groupID: "1", internalIDs: ["1", "2"], selected: "false"),FixtureGroup(name: "Peter", groupID: "1", internalIDs: ["1", "2"], selected: "false"), FixtureGroup(name: "", groupID: "", internalIDs: [], selected: "false")]), mixer: Mixer(pages: [MixerPage(num: "1", faders: [MixerFader(name: "Herbert", color: "#ffffff", isTouched: "false", value: "255", assignedType: "Fixture", assignedID: "1", id: "1")], buttons: [MixerButton(name: "Karsten", color: "#ffffff", isPressed: "true", assignedType: "FixtureGroup", assignedID: "1", id: "2")], id: "3")], color: "#ffffff", isMixerAvailable: "false", mixerType: "0"), meta: Meta(currentProject: Project(internalID: "1", name: "MLS Kleinkunst"), availableProjects: [Project(internalID: "1", name: "MLS Kleinkunst")], setup: "false", channels: "false", clipboard: ""))), websocket: .constant(WebSocket(cnw: .constant(ClientNetworking(ready: false, nwProtocol: .ws, ip: "192.168.178.187", port: "8000", path: "/ws/main", connected: false)), packet: .constant(Packet(fixtureTemplates: FixtureTemplateList(templates: []), fixtures: FixtureList(fixtures: []), fixtureGroups: FixtureGroupList(fixtureGroups: []), mixer: Mixer(pages: [], color: "#ffffff", isMixerAvailable: "false", mixerType: "0"), meta: Meta(currentProject: Project(internalID: "1", name: "MLS Kleinkunst"), availableProjects: [Project(internalID: "1", name: "MLS Kleinkunst")], setup: "false", channels: "false", clipboard: ""))))), navigationMode: .view)
+    SetupView(clientData: .constant(ClientData(networking: ClientNetworking(ready: false, nwProtocol: .ws, ip: "192.168.178.187", port: "8000", path: "/ws/main", connected: false), onboarding: ClientOnboarding(ready: true, step: 1), meta: ClientMeta(displayMode: .left))), packet: .constant(Packet(fixtureTemplates: FixtureTemplateList(templates: [FixtureTemplate(internalID: "1", name: "Hello", channels: [Channel(internalID: "1", ChannelName: "Milan", ChannelType: "Milan", dmxChannel: "1"), Channel(internalID: "2", ChannelName: "Johannes", ChannelType: "Johannes", dmxChannel: "2")]), FixtureTemplate(internalID: "2", name: "Hugo", channels: [])]), fixtures: FixtureList(fixtures: [Fixture(internalID: "1", name: "Thorsten", startChannel: "1", selected: "false", channels: [Channel(internalID: "3982", ChannelName: "Henriette", ChannelType: "Master", dmxChannel: "39")]), Fixture(internalID: "2", name: "Hans", startChannel: "1", selected: "true", channels: [])]), fixtureGroups: FixtureGroupList(fixtureGroups: [FixtureGroup(name: "Peter", groupID: "1", internalIDs: ["1", "2"], selected: "false"),FixtureGroup(name: "Peter", groupID: "1", internalIDs: ["1", "2"], selected: "false"),FixtureGroup(name: "Peter", groupID: "1", internalIDs: ["1", "2"], selected: "false"),FixtureGroup(name: "Peter", groupID: "1", internalIDs: ["1", "2"], selected: "false"),FixtureGroup(name: "Peter", groupID: "1", internalIDs: ["1", "2"], selected: "false"),FixtureGroup(name: "Peter", groupID: "1", internalIDs: ["1", "2"], selected: "false"),FixtureGroup(name: "Peter", groupID: "1", internalIDs: ["1", "2"], selected: "false"),FixtureGroup(name: "Peter", groupID: "1", internalIDs: ["1", "2"], selected: "false"),FixtureGroup(name: "Peter", groupID: "1", internalIDs: ["1", "2"], selected: "false"),FixtureGroup(name: "Peter", groupID: "1", internalIDs: ["1", "2"], selected: "false"),FixtureGroup(name: "Peter", groupID: "1", internalIDs: ["1", "2"], selected: "false"),FixtureGroup(name: "Peter", groupID: "1", internalIDs: ["1", "2"], selected: "false"),FixtureGroup(name: "Peter", groupID: "1", internalIDs: ["1", "2"], selected: "false"),FixtureGroup(name: "Peter", groupID: "1", internalIDs: ["1", "2"], selected: "false"),FixtureGroup(name: "Peter", groupID: "1", internalIDs: ["1", "2"], selected: "false"),FixtureGroup(name: "Peter", groupID: "1", internalIDs: ["1", "2"], selected: "false"),FixtureGroup(name: "Peter", groupID: "1", internalIDs: ["1", "2"], selected: "false"),FixtureGroup(name: "Peter", groupID: "1", internalIDs: ["1", "2"], selected: "false"),FixtureGroup(name: "Peter", groupID: "1", internalIDs: ["1", "2"], selected: "false"),FixtureGroup(name: "Peter", groupID: "1", internalIDs: ["1", "2"], selected: "false"),FixtureGroup(name: "PeterAAAHHAHHAHHAHHAHHAHHAHHAHHAHAHAHHAHHAHAHHAHHAHHAHHA", groupID: "1", internalIDs: ["1", "2"], selected: "false"),FixtureGroup(name: "Peter", groupID: "1", internalIDs: ["1", "2"], selected: "false"),FixtureGroup(name: "Peter", groupID: "1", internalIDs: ["1", "2"], selected: "false"), FixtureGroup(name: "", groupID: "", internalIDs: [], selected: "false")]), mixer: Mixer(pages: [MixerPage(num: "1", faders: [MixerFader(name: "Herbert", color: "#ffffff", isTouched: "false", value: "255", assignedType: "Fixture", assignedID: "1", id: "1")], buttons: [MixerButton(name: "Karsten", color: "#ffffff", isPressed: "true", assignedType: "FixtureGroup", assignedID: "1", id: "2")], id: "3")], color: "#ffffff", isMixerAvailable: "true", mixerType: "5"), meta: Meta(currentProject: Project(internalID: "1", name: "MLS Kleinkunst"), availableProjects: [Project(internalID: "1", name: "MLS Kleinkunst")], setup: "false", channels: "false", clipboard: ""))), websocket: .constant(WebSocket(cnw: .constant(ClientNetworking(ready: false, nwProtocol: .ws, ip: "192.168.178.187", port: "8000", path: "/ws/main", connected: false)), packet: .constant(Packet(fixtureTemplates: FixtureTemplateList(templates: []), fixtures: FixtureList(fixtures: []), fixtureGroups: FixtureGroupList(fixtureGroups: []), mixer: Mixer(pages: [], color: "#ffffff", isMixerAvailable: "true", mixerType: "5"), meta: Meta(currentProject: Project(internalID: "1", name: "MLS Kleinkunst"), availableProjects: [Project(internalID: "1", name: "MLS Kleinkunst")], setup: "false", channels: "false", clipboard: ""))))), navigationMode: .view)
 }

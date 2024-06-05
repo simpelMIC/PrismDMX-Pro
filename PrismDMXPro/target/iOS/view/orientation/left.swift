@@ -50,14 +50,24 @@ struct FixtureView: View {
                     VStack {
                         ScrollView(.horizontal, showsIndicators: false) {
                             HStack {
-                                ForEach($packet.fixtureGroups.fixtureGroups.wrappedValue.indices, id: \.self) { i in
-                                    SingleFixtureGroup(selected: $packet.fixtureGroups.fixtureGroups[i].selected.wrappedValue, name: $packet.fixtureGroups.fixtureGroups[i].name.wrappedValue)
-                                        .scrollTransition(topLeading: .interactive, bottomTrailing: .interactive, axis: .horizontal) { effect, phase in
-                                            effect
-                                                .scaleEffect(1 - abs(phase.value))
-                                                .opacity(1 - abs(phase.value))
-                                                .rotation3DEffect(.degrees(1 - phase.value * 90), axis: (x: 0, y: 1, z: 0))
+                                ForEach($packet.fixtureGroups.fixtureGroups.wrappedValue.indices, id: \.self) { index in
+                                    Button {
+                                        if $packet.fixtureGroups.fixtureGroups.wrappedValue[index].selected.bool() {
+                                            deselectFixtureGroup($packet.fixtureGroups.fixtureGroups.wrappedValue[index].groupID)
+                                        } else {
+                                            selectFixtureGroup($packet.fixtureGroups.fixtureGroups.wrappedValue[index].groupID)
                                         }
+                                    } label: {
+                                        SingleFixtureGroup(selected: $packet.fixtureGroups.fixtureGroups[index].selected, name: $packet.fixtureGroups.fixtureGroups[index].name)
+                                            .scrollTransition(topLeading: .interactive, bottomTrailing: .interactive, axis: .horizontal) { effect, phase in
+                                                effect
+                                                    .scaleEffect(1 - abs(phase.value))
+                                                    .opacity(1 - abs(phase.value))
+                                                    .rotation3DEffect(.degrees(1 - phase.value * 90), axis: (x: 0, y: 1, z: 0))
+                                                
+                                            }
+                                    }
+                                    .buttonStyle(.plain)
                                 }
                             }
                         }
@@ -70,33 +80,42 @@ struct FixtureView: View {
                         //------\\
                         LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())]) {
                             ForEach($packet.fixtures.fixtures.wrappedValue.indices, id: \.self) { index in // Replace with your data model here
-                                ZStack {
-                                    if $packet.fixtures.fixtures.wrappedValue[index].selected == "true" {
-                                        RoundedRectangle(cornerRadius: 18, style: .continuous)
-                                            .fill(.purple)
-                                            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .center)
-                                            .aspectRatio(1/1, contentMode: .fit)
-                                            .clipped()
-                                            .clipped()
+                                Button {
+                                    if $packet.fixtures.fixtures.wrappedValue[index].selected.bool() {
+                                        deselectFixture($packet.fixtures.fixtures.wrappedValue[index].internalID)
                                     } else {
-                                        RoundedRectangle(cornerRadius: 18, style: .continuous)
-                                            .fill(Color(.systemFill))
-                                            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .center)
-                                            .aspectRatio(1/1, contentMode: .fit)
-                                            .clipped()
-                                            .clipped()
+                                        selectFixture($packet.fixtures.fixtures.wrappedValue[index].internalID)
                                     }
-                                    VStack {
-                                        Image(systemName: "lightbulb.fill")
-                                            .imageScale(.large)
-                                            .symbolRenderingMode(.monochrome)
-                                            .font(.system(size: 20, weight: .regular, design: .default))
-                                        Text($packet.fixtures.fixtures.wrappedValue[index].name)
-                                            .font(.body)
-                                            .frame(width: 110, height: 50)
-                                            .clipped()
+                                } label: {
+                                    ZStack {
+                                        if $packet.fixtures.fixtures.wrappedValue[index].selected == "true" {
+                                            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                                                .fill(.purple)
+                                                .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .center)
+                                                .aspectRatio(1/1, contentMode: .fit)
+                                                .clipped()
+                                                .clipped()
+                                        } else {
+                                            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                                                .fill(Color(.systemFill))
+                                                .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity, alignment: .center)
+                                                .aspectRatio(1/1, contentMode: .fit)
+                                                .clipped()
+                                                .clipped()
+                                        }
+                                        VStack {
+                                            Image(systemName: "lightbulb.fill")
+                                                .imageScale(.large)
+                                                .symbolRenderingMode(.monochrome)
+                                                .font(.system(size: 20, weight: .regular, design: .default))
+                                            Text($packet.fixtures.fixtures.wrappedValue[index].name)
+                                                .font(.body)
+                                                .frame(width: 110, height: 50)
+                                                .clipped()
+                                        }
                                     }
                                 }
+                                .buttonStyle(.plain)
                             }
                         }
                         .padding()
@@ -105,16 +124,40 @@ struct FixtureView: View {
                 .navigationTitle(packet.meta.currentProject?.name ?? "Workspace")
             }
     }
+    
+    func selectFixture(_ id: String) {
+        Task {
+            await websocket.sendString("{\"selectFixture\": \"\(id)\"}", response: true)
+        }
+    }
+    
+    func deselectFixture(_ id: String) {
+        Task {
+            await websocket.sendString("{\"deselectFixture\": \"\(id)\"}", response: true)
+        }
+    }
+    
+    func selectFixtureGroup(_ id: String) {
+        Task {
+            await websocket.sendString("{\"selectFixtureGroup\": \"\(id)\"}", response: true)
+        }
+    }
+    
+    func deselectFixtureGroup(_ id: String) {
+        Task {
+            await websocket.sendString("{\"deselectFixtureGroup\": \"\(id)\"}", response: true)
+        }
+    }
 }
 
 struct SingleFixtureGroup: View {
-    @State var selected: String
-    @State var name: String
+    @Binding var selected: String
+    @Binding var name: String
     
     @State var frameSize: CGFloat = 194
     var body: some View {
         ZStack {
-            if $selected.wrappedValue == "true"{
+            if $selected.wrappedValue == "true" {
                 RoundedRectangle(cornerRadius: 20, style: .continuous)
                     .fill(.purple)
                     .frame(width: frameSize, height: frameSize)
