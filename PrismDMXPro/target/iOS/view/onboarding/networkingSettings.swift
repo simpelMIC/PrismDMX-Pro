@@ -79,6 +79,7 @@ struct NWSettingsView: View {
                         }
                         .buttonStyle(.borderedProminent)
                         //JSON Data Export
+                        /*
                         LazyHStack {
                             Button("Copy Fixtures") {
                                 let pasteboard = UIPasteboard.general
@@ -100,7 +101,7 @@ struct NWSettingsView: View {
                                 let pasteboard = UIPasteboard.general
                                 pasteboard.string = PacketJSONModule(currentPacket: $packet).encode($packet.meta.wrappedValue) ?? "error"
                             }
-                        }
+                        }*/
                     }
                 }
             }
